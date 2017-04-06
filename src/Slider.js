@@ -57,16 +57,43 @@ class Slider extends Component {
     next = next < min ? min : next
     next = next > higherBound ? higherBound : next
     this.setState({
-      start: next
+      start: next,
     })
   }
 
   moveBar(mouseX){
-    
+    const {width,start,end} = this.state
+    const {min,max} = this.props
+
+    let offset = mouseX - this.state.mouseX
+    const range = max - min
+
+    if(width === 0){
+      return 0
+    }
+    const delta = (offset/width)*range
+
+    const currentRange = end - start
+    const lowerBound = min + currentRange
+    const upperBound = max - currentRange
+    let nextStart = start + delta
+    let nextEnd = end + delta
+    nextStart = nextStart < min ? min : nextStart
+    nextStart = nextStart > upperBound ? upperBound : nextStart
+    nextEnd = nextEnd > max ? max : nextEnd
+    nextEnd = nextEnd < lowerBound ? lowerBound : nextEnd
+
+    this.setState({
+      mouseX,
+      start: nextStart,
+      end: nextEnd
+    })
+
   }
 
-  start(target){
+  start(e,target){
     this.setState({
+      mouseX: e.pageX,
       target,
     })
     this.fireEvent('onRangeChangeStart')
@@ -74,13 +101,14 @@ class Slider extends Component {
 
   end(){
     this.setState({
-      target: null
+      target: null,
+      mouseX: undefined
     })
     this.fireEvent('onRangeChangeEnd')
   }
 
   handleMouseDown(e, target){
-    this.start(target)
+    this.start(e,target)
     document.addEventListener('mousemove',this.handleMouseMove,false)
     document.addEventListener('mouseup',this.handleMouseUp,false)
     stop(e)
