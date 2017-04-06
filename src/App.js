@@ -5,11 +5,30 @@ import './App.css'
 
 class App extends Component {
 
-  render() {
+  constructor(){
+    super()
+    this.state = {
+      start: 1,
+      end: 3
+    }
+  }
 
+  onRangeChange(params){
+    this.setState({
+      start: params.start,
+      end: params.end
+    })
+  }
+
+  render() {
+    const {start,end} = this.state
     return (
       <div className='container'>
-        <Slider />
+        <div>
+          <p>Start: {start.toFixed(2)} </p>
+          <p>End: {end.toFixed(2)}</p>
+        </div>
+        <Slider min={0} max={10} minRange={1} start={1} end={3} onRangeChange={this.onRangeChange.bind(this)}/>
       </div>
     );
   }

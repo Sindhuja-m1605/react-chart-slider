@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 
 class Slider extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
+    const {start,end } = this.props
     this.state = {
-      min: 0,
-      max: 10,
-      start: 3,
-      end: 5,
-      width: 0
+      start,
+      end,
+      width: 0,
+      left: 0,
+      target: null
     }
 
     this.handleResize = this.handleResize.bind(this)
@@ -18,29 +19,108 @@ class Slider extends Component {
     this.handleMouseUp = this.handleMouseUp.bind(this)
   }
 
-  move(position){
-
+  stop(e){
+    if(e.stopPropagation) e.stopPropagation()
+    if(e.preventDefault) e.preventDefault()
   }
 
-  handleMouseDown(e){
-    let position = [e.pageX,e.pageY]
+  getNextValue(mouseX){
+    const { left, width } = this.state
+    const { min, max } = this.props
+    const range = max - min
+    if(width === 0){
+      return 0
+    }
+    let ratio = (mouseX - left)/width
+    ratio = ratio > 1 ? 1 : ratio
+    ratio = ratio < 0 ? 0 : ratio
+    return ratio*range
+  }
+
+  moveEnd(mouseX){
+    const { max, minRange } = this.props
+    const { start } = this.state
+    const lowerBound = start + minRange
+    let next = this.getNextValue(mouseX)
+    next = next > max ? max : next
+    next = next < lowerBound ? lowerBound : next
+    this.setState({
+      end: next
+    })
+  }
+
+  moveStart(mouseX){
+    const { min, minRange } = this.props
+    const { end } = this.state
+    const higherBound = end - minRange
+    let next = this.getNextValue(mouseX)
+    next = next < min ? min : next
+    next = next > higherBound ? higherBound : next
+    this.setState({
+      start: next
+    })
+  }
+
+  moveBar(mouseX){
+    
+  }
+
+  start(target){
+    this.setState({
+      target,
+    })
+    this.fireEvent('onRangeChangeStart')
+  }
+
+  end(){
+    this.setState({
+      target: null
+    })
+    this.fireEvent('onRangeChangeEnd')
+  }
+
+  handleMouseDown(e, target){
+    this.start(target)
     document.addEventListener('mousemove',this.handleMouseMove,false)
     document.addEventListener('mouseup',this.handleMouseUp,false)
+    stop(e)
   }
 
   handleMouseUp(e){
-    let position = [e.pageX,e.pageY]
+    this.end()
     document.removeEventListener('mousemove',this.handleMouseMove,false)
     document.removeEventListener('mouseup',this.handleMouseUp,false)
+    stop(e)
+  }
+
+  fireEvent(event){
+    const e = this.props[event]
+    const {start,end} = this.state
+    if(e) e({start,end})
   }
 
   handleMouseMove(e){
-    let position = [e.pageX,e.pageY]
-    this.move(position[0])
+    const mouseX = e.pageX
+    const target = this.state.target
+    switch(target){
+      case 'handle0':
+        this.moveStart(mouseX)
+        break
+      case 'handle1':
+        this.moveEnd(mouseX)
+        break
+      case 'bar':
+        this.moveBar(mouseX)
+        break
+      default:
+        throw new Error('Unknown move target '+target)
+    }
+    this.fireEvent('onRangeChange')
+    stop(e)
   }
 
   calcOffset(value) {
-    const { max, min } = this.state
+    const { max, min } = this.props
     let range = max - min
     if (range === 0) {
       return 0
@@ -55,7 +135,8 @@ class Slider extends Component {
       let rect = slider.getBoundingClientRect();
 
       this.setState({
-        width: rect.width
+        width: rect.width,
+        left: rect.left
       })
     }, 0)
   }
@@ -82,7 +163,7 @@ class Slider extends Component {
         key={key}
         style={this.buildHandleStyle(offset[i]-10,i)}
         className='handle'
-        onMouseDown={this.handleMouseDown}></div>
+        onMouseDown={ (e) => this.handleMouseDown(e,key) }></div>
     })
   }
 
@@ -99,7 +180,9 @@ class Slider extends Component {
     const min = offset[0]
     const max = this.state.width - offset[1] 
     return <div style={this.buildBarStyle(min,max)}
-      className='bar'></div>
+      className='bar'
+      ref='bar'
+      onMouseDown={(e) => this.handleMouseDown(e,'bar')}></div>
   }
 
   render() {
