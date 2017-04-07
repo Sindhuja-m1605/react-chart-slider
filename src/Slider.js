@@ -19,9 +19,13 @@ class Slider extends Component {
     this.handleMouseUp = this.handleMouseUp.bind(this)
   }
 
-  stop(e){
-    if(e.stopPropagation) e.stopPropagation()
-    if(e.preventDefault) e.preventDefault()
+  pauseEvent(e){
+    if(e.stopPropagation){
+      e.stopPropagation()
+    }
+    if(e.preventDefault){
+      e.preventDefault()
+    }
   }
 
   getNextValue(mouseX){
@@ -111,14 +115,14 @@ class Slider extends Component {
     this.start(e,target)
     document.addEventListener('mousemove',this.handleMouseMove,false)
     document.addEventListener('mouseup',this.handleMouseUp,false)
-    stop(e)
+    this.pauseEvent(e)
   }
 
   handleMouseUp(e){
     this.end()
     document.removeEventListener('mousemove',this.handleMouseMove,false)
     document.removeEventListener('mouseup',this.handleMouseUp,false)
-    stop(e)
+    this.pauseEvent(e)
   }
 
   fireEvent(event){
@@ -130,6 +134,7 @@ class Slider extends Component {
   handleMouseMove(e){
     const mouseX = e.pageX
     const target = this.state.target
+    this.pauseEvent(e)
     switch(target){
       case 'handle0':
         this.moveStart(mouseX)
@@ -144,7 +149,6 @@ class Slider extends Component {
         throw new Error('Unknown move target '+target)
     }
     this.fireEvent('onRangeChange')
-    stop(e)
   }
 
   calcOffset(value) {
