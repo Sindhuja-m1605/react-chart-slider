@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
 import { Tooltip } from 'reactstrap';
 
+function zeroPad(x){
+  return x >= 10 ? x : '0' + x
+}
+
+function format(value){
+  let d = new Date(value)
+  return  zeroPad(d.getHours()) + ':' +  zeroPad(d.getMinutes()) +
+   ':' +  zeroPad(d.getSeconds()) + ' ' +
+    zeroPad(d.getDate()) + '-' + zeroPad(d.getMonth()+1) + '-' + d.getFullYear()
+}
+
 class Slider extends Component {
 
   constructor(props) {
@@ -211,7 +222,7 @@ class Slider extends Component {
           isOpen={true}
           target={key}
           tetherRef={this.getTetherRef}>
-          {value.toFixed(2)}
+          {format(value)}
         </Tooltip>
         ]
     })

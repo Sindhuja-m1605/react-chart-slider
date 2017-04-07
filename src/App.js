@@ -3,13 +3,21 @@ import Slider from './Slider'
 
 import './App.css'
 
+let now = new Date()
+const initial = {
+  min: +now - 60*60*1000,
+  max: +now,
+  start: +now - 60*30*1000,
+  end: +now - 60*15*1000,
+}
+
 class App extends Component {
 
   constructor(){
     super()
     this.state = {
-      start: 1,
-      end: 3
+      start: initial.start,
+      end: initial.end
     }
   }
 
@@ -28,7 +36,7 @@ class App extends Component {
           <p>Start: {start.toFixed(2)} </p>
           <p>End: {end.toFixed(2)}</p>
         </div>
-        <Slider min={1} max={10} minRange={1} start={1} end={3} onRangeChange={this.onRangeChange.bind(this)}/>
+        <Slider min={initial.min} max={initial.max} minRange={1000} start={initial.start} end={initial.end} onRangeChange={this.onRangeChange.bind(this)}/>
       </div>
     );
   }
