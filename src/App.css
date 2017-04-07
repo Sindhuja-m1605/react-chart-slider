@@ -4,6 +4,7 @@
   position: relative;
   border-right: solid 3px #dddddd;
   border-left: solid 3px #dddddd;
+  border-radius: 7px;
 }
 
 .slider:after {

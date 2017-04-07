@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Tooltip } from 'reactstrap';
 
 class Slider extends Component {
 
@@ -17,6 +18,8 @@ class Slider extends Component {
     this.handleMouseDown = this.handleMouseDown.bind(this)
     this.handleMouseMove = this.handleMouseMove.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
+    this.getTetherRef = this.getTetherRef.bind(this)
+    this.tethers = []
   }
 
   pauseEvent(e){
@@ -188,14 +191,29 @@ class Slider extends Component {
     return style
   }
 
+  getTetherRef(t){
+    this.tethers.push(t)
+  }
+
   renderHandles(handles,offset) {
-    return handles.map((handle, i) => {
+    return handles.map((value, i) => {
       const key = 'handle' + i
-      return <div ref={key}
+      return [<div
+        id={key}
         key={key}
         style={this.buildHandleStyle(offset[i]-10,i)}
         className='handle'
-        onMouseDown={ (e) => this.handleMouseDown(e,key) }></div>
+        onMouseDown={ (e) => this.handleMouseDown(e,key) }>
+
+        </div>,
+        <Tooltip
+          placement="top"
+          isOpen={true}
+          target={key}
+          tetherRef={this.getTetherRef}>
+          {value.toFixed(2)}
+        </Tooltip>
+        ]
     })
   }
 
@@ -217,17 +235,27 @@ class Slider extends Component {
       onMouseDown={(e) => this.handleMouseDown(e,'bar')}></div>
   }
 
+  componentDidUpdate(){
+    const tethers = this.tethers
+    setTimeout(function () {
+        tethers.forEach((t) => {
+          t.position()
+        })
+    }, 0)
+  }
+
   render() {
     const {start, end} = this.state
-    let handles = ['start', 'end']
+    let handles = [start, end]
     let offset = [this.calcOffset(start),this.calcOffset(end)]
+    
     return (
       <div ref='slider' className={'slider'}>
         {this.renderHandles(handles,offset)}
         {this.renderBar(offset)}
       </div>
 
-    );
+    )
   }
 }
 
