@@ -28,7 +28,7 @@ class App extends Component {
           <p>Start: {start.toFixed(2)} </p>
           <p>End: {end.toFixed(2)}</p>
         </div>
-        <Slider min={0} max={10} minRange={1} start={1} end={3} onRangeChange={this.onRangeChange.bind(this)}/>
+        <Slider min={1} max={10} minRange={1} start={1} end={3} onRangeChange={this.onRangeChange.bind(this)}/>
       </div>
     );
   }

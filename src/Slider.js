@@ -41,7 +41,7 @@ class Slider extends Component {
     let ratio = (mouseX - left)/width
     ratio = ratio > 1 ? 1 : ratio
     ratio = ratio < 0 ? 0 : ratio
-    return ratio*range
+    return ratio*range + min
   }
 
   moveEnd(mouseX){
