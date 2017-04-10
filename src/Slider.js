@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
 import { Tooltip } from 'reactstrap';
+import moment from 'moment'
 
-function zeroPad(x){
-  return x >= 10 ? x : '0' + x
-}
 
-function format(value){
-  let d = new Date(value)
-  return  zeroPad(d.getHours()) + ':' +  zeroPad(d.getMinutes()) +
-   ':' +  zeroPad(d.getSeconds()) + ' ' +
-    zeroPad(d.getDate()) + '-' + zeroPad(d.getMonth()+1) + '-' + d.getFullYear()
-}
+const HANDLE_WIDTH = 10
+const SLIDER_BTN_WIDTH = 27 + (HANDLE_WIDTH/2)
 
 class Slider extends Component {
 
@@ -172,7 +166,7 @@ class Slider extends Component {
       return 0
     }
     let ratio = (value - min) / range
-    return ratio * this.state.width
+    return ratio * (this.state.width)
   }
 
   handleResize() {
@@ -181,7 +175,7 @@ class Slider extends Component {
       let rect = slider.getBoundingClientRect();
 
       this.setState({
-        width: rect.width,
+        width: rect.width - SLIDER_BTN_WIDTH,
         left: rect.left
       })
     }, 0)
@@ -212,7 +206,7 @@ class Slider extends Component {
       return [<div
         id={key}
         key={key}
-        style={this.buildHandleStyle(offset[i]-10,i)}
+        style={this.buildHandleStyle(offset[i] - (HANDLE_WIDTH/2),i)}
         className='handle'
         onMouseDown={ (e) => this.handleMouseDown(e,key) }>
 
@@ -222,7 +216,7 @@ class Slider extends Component {
           isOpen={true}
           target={key}
           tetherRef={this.getTetherRef}>
-          {format(value)}
+          {moment(value).format("HH:mm:ss")}
         </Tooltip>
         ]
     })
@@ -239,11 +233,19 @@ class Slider extends Component {
 
   renderBar(offset) {
     const min = offset[0]
-    const max = this.state.width - offset[1] 
+    const max = this.state.width - offset[1] + SLIDER_BTN_WIDTH
     return <div style={this.buildBarStyle(min,max)}
       className='bar'
       ref='bar'
       onMouseDown={(e) => this.handleMouseDown(e,'bar')}></div>
+  }
+
+  renderSliderBtn(){
+    return (
+      <div className="slider-btn">
+        &raquo;
+      </div>
+    )
   }
 
   componentDidUpdate(){
@@ -255,17 +257,26 @@ class Slider extends Component {
     }, 0)
   }
 
+  componentWillReceiveProps(nextProps){
+    if(this.props.start != nextProps.start || this.props.end != nextProps.end){
+      this.setState({
+        start: nextProps.start,
+        end: nextProps.end
+      })
+    }
+  }
+
   render() {
     const {start, end} = this.state
     let handles = [start, end]
     let offset = [this.calcOffset(start),this.calcOffset(end)]
     
     return (
-      <div ref='slider' className={'slider'}>
-        {this.renderHandles(handles,offset)}
-        {this.renderBar(offset)}
-      </div>
-
+        <div ref='slider' className={'slider'}>
+          {this.renderHandles(handles,offset)}
+          {this.renderBar(offset)}
+          {this.renderSliderBtn()}
+        </div>
     )
   }
 }

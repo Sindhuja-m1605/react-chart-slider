@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Button, ButtonGroup, Input, Form, FormGroup, Label } from 'reactstrap'
 import Slider from './Slider'
+import moment from 'moment'
 
 import './App.css'
 
@@ -28,15 +30,54 @@ class App extends Component {
     })
   }
 
+  handleButtonClick(e){
+    
+  }
+
+  handleSetRange(e){
+
+  }
+
   render() {
     const {start,end} = this.state
     return (
       <div className='container'>
-        <div>
-          <p>Start: {start.toFixed(2)} </p>
-          <p>End: {end.toFixed(2)}</p>
+        <div className="clearfix">
+          <div className="float-left">
+            <Form inline>
+              <FormGroup>
+                <Label for="input-from" className="inline-form-label"><b>From:</b></Label>
+                <Input type="text" name="from" id="input-from"  size="sm" value={moment(start).format("HH:mm:ss")} />
+              </FormGroup>
+              <FormGroup>
+                <Label for="input-to" className="inline-form-label"><b>To:</b></Label>
+                <Input type="text" name="from" id="input-to"  size="sm" value={moment(end).format("HH:mm:ss")} />
+              </FormGroup>
+              <FormGroup style={{marginLeft:5}}>
+                <Button color="secondary" size="sm" className="range-btn">Set</Button>
+              </FormGroup>
+            </Form>
+          </div>
+          <div className="float-right">
+            <b className="inline-form-label">Zoom</b>
+            <ButtonGroup>
+              <Button color="secondary" size="sm" className="range-btn">15m</Button>
+              <Button color="secondary" size="sm" className="range-btn">30m</Button>
+              <Button color="secondary" size="sm" className="range-btn">1h</Button>
+              <Button color="secondary" size="sm" className="range-btn">2h</Button>
+              <Button color="secondary" active size="sm" className="range-btn">All</Button>
+            </ButtonGroup>
+          </div>
         </div>
-        <Slider min={initial.min} max={initial.max} minRange={1000} start={initial.start} end={initial.end} onRangeChange={this.onRangeChange.bind(this)}/>
+        <div className="row">
+          <Slider 
+          min={initial.min} 
+          max={initial.max} 
+          minRange={5*1000*60} 
+          start={initial.start} 
+          end={initial.end} 
+          onRangeChange={this.onRangeChange.bind(this)}/>
+        </div> 
       </div>
     );
   }
