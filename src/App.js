@@ -46,7 +46,6 @@ class App extends Component {
 
   handleButtonClick(time){
     const {min, max} = initial
-    const {start} = this.state
     let aux = max - time
     aux = aux < min ? min : aux
     this.setState({
@@ -73,7 +72,6 @@ class App extends Component {
       return
     }
     const lowerBound = moment(+start+initial.minRange)
-    console.log(lowerBound)
     if(lowerBound.isAfter(end)){
       this.setState({"error": "Final time too small"})
       return
@@ -130,7 +128,7 @@ class App extends Component {
               <Button color="secondary" size="sm" className="range-btn"
               onClick={()=>{this.handleButtonClick(120*60*1000)}}
               active={selectedTime === 120*60*1000 }>2h</Button>
-              <Button color="secondary" active size="sm" className="range-btn"
+              <Button color="secondary" size="sm" className="range-btn"
               onClick={()=>{this.handleButtonClick(Number.MAX_SAFE_INTEGER)}}
               active={selectedTime === Number.MAX_SAFE_INTEGER}>All</Button>
             </ButtonGroup>
