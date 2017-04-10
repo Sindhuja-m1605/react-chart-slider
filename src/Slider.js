@@ -258,7 +258,7 @@ class Slider extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    if(this.props.start != nextProps.start || this.props.end != nextProps.end){
+    if(this.props.start !== nextProps.start || this.props.end !== nextProps.end){
       this.setState({
         start: nextProps.start,
         end: nextProps.end
