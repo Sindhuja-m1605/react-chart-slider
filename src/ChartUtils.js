@@ -21,17 +21,32 @@ const colors = {
     }
 }
 
+const shard = 0.1
+function randomizeTrend(d1,d2){
+    if(d1 === undefined || d2 === undefined){
+        return 0
+    }
+    let mult = d1.y <= d2.y ? (Math.random() < 0.6 ? 1 : -1)  : (Math.random() < 0.6 ? -1 : 1)
+    const ret_val = d2.y + shard*Math.ceil(Math.random()*10)*mult
+    return ret_val
+}
+
 function genData(){
     let now = new Date()
     let delta = 480*60*1000
     let start = now - delta
     const interval = 10000
     let points = delta/interval
-    let data = []
-    for(let i=0;i<points;i++){
+    let data = [
+        {
+            x: start,
+            y:0
+        }
+    ]
+    for(let i=1;i<points;i++){
         data.push({
             x: start + i*interval,
-            y: Math.floor(Math.random()*10)
+            y: randomizeTrend(data[i-2],data[i-1])
         })
     }
     return data
