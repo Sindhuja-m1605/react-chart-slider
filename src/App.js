@@ -8,7 +8,7 @@ import './App.css'
 
 let now = new Date()
 const initial = {
-  min: +now - 300*60*1000,
+  min: +now - 480*60*1000,
   max: +now,
   start: +now - 60*30*1000,
   end: +now - 60*15*1000,
@@ -139,7 +139,9 @@ class App extends Component {
           <p className="text-danger">{error}</p>
         </div>
         <div className="row">
-          <ChartWrapper theme="light"/>
+          <ChartWrapper theme="light"
+            start={start} 
+            end={end}/>
         </div>
         <div className="row">
           <Slider 

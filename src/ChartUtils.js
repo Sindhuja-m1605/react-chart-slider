@@ -23,7 +23,7 @@ const colors = {
 
 function genData(){
     let now = new Date()
-    let delta = 300*60*1000
+    let delta = 480*60*1000
     let start = now - delta
     const interval = 10000
     let points = delta/interval
@@ -67,7 +67,7 @@ export function buildData(style,ctx){
     return data
 }
 
-export function buildOptions(style){
+export function buildOptions(style,min,max){
     const theme = colors[style]
     const options = {
         responsive: true,
@@ -113,6 +113,8 @@ export function buildOptions(style){
                     autoSkipPadding: 35
                 },
                 time: {
+                    max,
+                    min,
                     displayFormats: {
                         'millisecond': 'HH:mm:ss.SSS',
                         'second': 'HH:mm:ss',
