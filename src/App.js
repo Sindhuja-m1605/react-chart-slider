@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, ButtonGroup, Input, Form, FormGroup, Label } from 'reactstrap'
 import Slider from './Slider'
 import moment from 'moment'
+import ChartWrapper from './ChartWrapper'
 
 import './App.css'
 
@@ -136,6 +137,9 @@ class App extends Component {
         </div>
         <div>
           <p className="text-danger">{error}</p>
+        </div>
+        <div className="row">
+          <ChartWrapper theme="light"/>
         </div>
         <div className="row">
           <Slider 
