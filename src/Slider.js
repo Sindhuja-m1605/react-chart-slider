@@ -24,6 +24,7 @@ class Slider extends Component {
     this.handleMouseMove = this.handleMouseMove.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
     this.getTetherRef = this.getTetherRef.bind(this)
+    this.handleButtonClick = this.handleButtonClick.bind(this)
     this.tethers = []
   }
 
@@ -59,6 +60,7 @@ class Slider extends Component {
     this.setState({
       end: next
     })
+    return {start,end:next}
   }
 
   moveStart(mouseX){
@@ -71,6 +73,7 @@ class Slider extends Component {
     this.setState({
       start: next,
     })
+    return {end,start:next}
   }
 
   moveBar(mouseX){
@@ -100,7 +103,7 @@ class Slider extends Component {
       start: nextStart,
       end: nextEnd
     })
-
+    return {end:nextEnd,start:nextStart}
   }
 
   start(e,target){
@@ -133,9 +136,20 @@ class Slider extends Component {
     this.pauseEvent(e)
   }
 
-  fireEvent(event){
-    const e = this.props[event]
+  handleButtonClick(e){
     const {start,end} = this.state
+    const {max} = this.props
+    const currentRange = end - start
+    const nextStart = max - currentRange
+    this.setState({
+      end: max,
+      start: nextStart
+    })
+    this.fireEvent('onRangeChange',nextStart,max)
+  }
+
+  fireEvent(event,start,end){
+    const e = this.props[event]
     if(e) e({start,end})
   }
 
@@ -143,20 +157,22 @@ class Slider extends Component {
     const mouseX = e.pageX
     const target = this.state.target
     this.pauseEvent(e)
+    let pos
     switch(target){
       case 'handle0':
-        this.moveStart(mouseX)
+        pos = this.moveStart(mouseX)
         break
       case 'handle1':
-        this.moveEnd(mouseX)
+        pos = this.moveEnd(mouseX)
         break
       case 'bar':
-        this.moveBar(mouseX)
+        pos = this.moveBar(mouseX)
         break
       default:
         throw new Error('Unknown move target '+target)
     }
-    this.fireEvent('onRangeChange')
+    const {start,end} = pos
+    this.fireEvent('onRangeChange', start,end)
   }
 
   calcOffset(value) {
@@ -242,7 +258,7 @@ class Slider extends Component {
 
   renderSliderBtn(){
     return (
-      <div className="slider-btn">
+      <div className="slider-btn" onClick={this.handleButtonClick}>
         &raquo;
       </div>
     )
